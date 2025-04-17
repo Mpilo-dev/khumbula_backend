@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "start:prod": "SET NODE_ENV=production&& nodemon server.js"
   },
   "repository": {
     "type": "git",
@@ -18,9 +19,20 @@
   "homepage": "https://github.com/Mpilo-dev/khumbula_backend#readme",
   "description": "",
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "mongoose": "^8.9.5"
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.0.0",
+    "hpp": "^0.2.3",
+    "jsonwebtoken": "^9.0.2",
+    "moment-timezone": "^0.5.47",
+    "mongoose": "^8.9.5",
+    "morgan": "^1.10.0",
+    "node-cron": "^3.0.3",
+    "twilio": "^5.4.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"
