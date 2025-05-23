@@ -86,7 +86,7 @@ userSchema.methods.createOtp = async function () {
 
   this.otp = await bcrypt.hash(otp, 10);
   // revert back to 10mins
-  this.otpExpires = Date.now() + 60 * 60 * 1000;
+  this.otpExpires = Date.now() + 10 * 60 * 1000;
 
   return otp;
 };

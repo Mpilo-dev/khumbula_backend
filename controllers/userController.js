@@ -1,6 +1,8 @@
 const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
+const { sendOtp } = require("../utils/sendOpt");
+const { createSendToken } = require("../controllers/authController");
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -25,6 +27,7 @@ exports.getUser = catchAsync(async (req, res, next) => {
     },
   });
 });
+
 exports.updateMe = catchAsync(async (req, res, next) => {
   if (req.body.password) {
     return next(
@@ -66,22 +69,38 @@ exports.updateMe = catchAsync(async (req, res, next) => {
       return next(new AppError("Phone number is already in use.", 400));
     }
 
+    // Generate and save OTP
     const otp = await user.createOtp();
     user.otpPurpose = "phoneVerification";
     user.tempPhoneNumber = newPhoneNumber;
 
     try {
+      // Send OTP to the new phone number
       await sendOtp(newPhoneNumber, otp);
     } catch (error) {
       return next(new AppError("Failed to send OTP. Try again later.", 500));
     }
 
+    // Save the user with temporary phone number and OTP
     await user.save({ validateBeforeSave: false });
+
+    // Update other user fields if provided
+    if (Object.keys(filteredBody).length > 0) {
+      await User.findByIdAndUpdate(req.user.id, filteredBody, {
+        new: true,
+        runValidators: true,
+      });
+    }
 
     return res.status(202).json({
       status: "pending",
       message: "OTP sent to new phone number. Verify to complete update.",
-      data: { user: filteredBody },
+      data: {
+        user: {
+          ...filteredBody,
+          phoneNumber: user.phoneNumber, // Return current phone number, not the new one
+        },
+      },
     });
   }
 
