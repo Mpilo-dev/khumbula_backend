@@ -135,6 +135,7 @@ exports.updateAlert = catchAsync(async (req, res, next) => {
       };
     });
     alert.alertTimes = parsedTimes;
+    alert.timesPerDay = parsedTimes.length; // Update timesPerDay to match new number of alert times
   }
 
   // Validate and update pills if provided
