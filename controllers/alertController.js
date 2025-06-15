@@ -4,6 +4,10 @@ const User = require("../models/userModel");
 const Pill = require("../models/pillModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
+const {
+  scheduleAlert,
+  cancelAlertJobs,
+} = require("../services/alertScheduler");
 
 // Helper function to convert UTC times to SAST
 const convertAlertTimesToSAST = (alert) => {
@@ -83,6 +87,17 @@ exports.createAlert = catchAsync(async (req, res, next) => {
     $push: { alerts: newAlert._id },
   });
 
+  // Schedule the new alert if it's active
+  if (isActive) {
+    const populatedAlert = await Alert.findById(newAlert._id)
+      .populate({
+        path: "user",
+        select: "firstName lastName phoneNumber",
+      })
+      .populate("pills");
+    scheduleAlert(populatedAlert);
+  }
+
   res.status(201).json({
     status: "success",
     data: { alert: newAlert },
@@ -159,6 +174,20 @@ exports.updateAlert = catchAsync(async (req, res, next) => {
   if (isActive !== undefined) alert.isActive = isActive; // Toggle active/inactive
 
   const updatedAlert = await alert.save();
+
+  // Update scheduling based on active status
+  if (updatedAlert.isActive) {
+    const populatedAlert = await Alert.findById(updatedAlert._id)
+      .populate({
+        path: "user",
+        select: "firstName lastName phoneNumber",
+      })
+      .populate("pills");
+    scheduleAlert(populatedAlert);
+  } else {
+    cancelAlertJobs(updatedAlert._id);
+  }
+
   res.status(200).json({
     status: "success",
     data: { alert: updatedAlert },
@@ -178,6 +207,9 @@ exports.deleteAlert = catchAsync(async (req, res, next) => {
     $pull: { alerts: req.params.id },
   });
 
+  // Cancel any scheduled jobs for this alert
+  cancelAlertJobs(req.params.id);
+
   res.status(200).json({ message: "Alert deleted successfully" });
 });
 
@@ -194,6 +226,19 @@ exports.toggleAlertStatus = catchAsync(async (req, res, next) => {
   );
 
   if (!alert) return next(new AppError("No Alert found with that ID", 404));
+
+  // Update scheduling based on active status
+  if (isActive) {
+    const populatedAlert = await Alert.findById(alert._id)
+      .populate({
+        path: "user",
+        select: "firstName lastName phoneNumber",
+      })
+      .populate("pills");
+    scheduleAlert(populatedAlert);
+  } else {
+    cancelAlertJobs(alert._id);
+  }
 
   res.status(200).json({
     status: "success",

@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 dotenv.config({ path: "./config.env" });
 
-const scheduleUserAlerts = require("./services/alertScheduler");
+const { scheduleUserAlerts } = require("./services/alertScheduler");
 
 process.on("uncaughtException", (err) => {
   console.log("uncaughtException REJECTION! Shutting down...");
@@ -38,3 +38,4 @@ process.on("unhandledRejection", (err) => {
     process.exit(1);
   });
 });
+
