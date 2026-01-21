@@ -36,7 +36,7 @@ jobs:
             echo "Set them at: https://github.com/${{ github.repository }}/settings/secrets/actions"
             exit 1
           fi
-          echo "EC2_USER and EC2_HOST are present."
+          echo "EC2_USER and EC2_HOST were set present."
 
       - name: Deploy to EC2
         run: |
