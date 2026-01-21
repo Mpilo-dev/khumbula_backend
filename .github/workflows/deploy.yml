@@ -13,12 +13,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup SSH
-        shell: bash
+      - name: Setup SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+
+      - name: Add EC2 host to known_hosts
         run: |
           mkdir -p $HOME/.ssh
-          echo "${{ secrets.EC2_SSH_KEY }}" > $HOME/.ssh/id_rsa
-          chmod 600 $HOME/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> $HOME/.ssh/known_hosts
 
       - name: Deploy to EC2
