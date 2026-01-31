@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  api:
+    image: node-api:${IMAGE_TAG}
+    container_name: node-api
+    restart: unless-stopped
+    env_file:
+      - .env
+      - config.env
+    ports:
+      - "127.0.0.1:8000:8000"
