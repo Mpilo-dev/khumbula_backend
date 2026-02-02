@@ -3,7 +3,7 @@ FROM node:20-alpine
 
 RUN apk add --no-cache tzdata \
     && cp /usr/share/zoneinfo/Africa/Johannesburg /etc/localtime \
-    && echo "Africa/Johannesburg" > /etc
+    && echo "Africa/Johannesburg" > /etc/timezone
 
 WORKDIR /app
 
