@@ -15,6 +15,11 @@ This is the back-end API for the Khumbula medication reminder app. It is built u
 - dotenv
 - Bcrypt for password hashing
 
+## 🛠 DevOps
+
+- CI/CD (Github Actions)
+- AWS(EC2, Docker)
+
 ## 📦 Getting Started
 
 ### 1. Clone the Repository
