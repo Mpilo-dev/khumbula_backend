@@ -44,8 +44,6 @@ jobs:
             cd /home/ubuntu/khumbula_backend
             git pull origin main
 
-             docker compose build
-            docker compose up -d
-
-            docker image prune -f
+            npm install
+            sudo systemctl restart khumbula.service
           EOF
