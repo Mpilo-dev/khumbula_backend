@@ -18,7 +18,8 @@ This is the back-end API for the Khumbula medication reminder app. It is built u
 ## 🛠 DevOps
 
 - CI/CD (Github Actions)
-- AWS(EC2, Docker)
+- AWS(EC2, Route 53)
+- Docker
 
 ## 📦 Getting Started
 
